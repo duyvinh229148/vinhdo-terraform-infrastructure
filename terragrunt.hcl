@@ -7,7 +7,7 @@ locals {
   env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
 
   aws_account_id = local.env_vars.locals.aws_account_id
-  aws_region = local.env_vars.locals.aws_region
+  region = local.env_vars.locals.region
 }
 
 generate "versions" {
@@ -32,10 +32,10 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    bucket = "my-terraform-state-${local.aws_account_id}-${local.aws_region}"
+    bucket = "my-terraform-state-${local.aws_account_id}-${local.region}"
 
     key            = "${path_relative_to_include()}/terraform.tfstate"
-    region         = "${local.aws_region}"
+    region         = "${local.region}"
     encrypt        = true
     dynamodb_table = "my-lock-table"
   }
