@@ -5,7 +5,7 @@ locals {
 }
 
 terraform {
-  source = "${path_relative_from_include()}/../modules/iam-roles"
+  source = "${path_relative_from_include()}/../modules/iam-roles-data"
 }
 
 inputs = {
