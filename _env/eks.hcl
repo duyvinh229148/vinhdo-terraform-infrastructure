@@ -1,15 +1,16 @@
 locals {
   env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
 
-  env            = local.env_vars.locals.env
+  env        = local.env_vars.locals.env
   account_id = local.env_vars.locals.account_id
-  region         = local.env_vars.locals.region
+  region     = local.env_vars.locals.region
 
   cluster_name = "${local.env}-${local.region}-cluster"
 }
 
 dependency "vpc" {
-  config_path = "${path_relative_to_include()}/../vpc"
+  #  config_path = "${path_relative_to_include()}/../vpc"
+  config_path = "/home/ubuntu/Documents/vinhdo/vinhdo-terraform-infrastructure/prod/vpc"
 
   mock_outputs = {
     vpc_id          = ""
@@ -19,7 +20,8 @@ dependency "vpc" {
 }
 
 dependency "kms" {
-  config_path = "${path_relative_to_include()}/../kms"
+  #  config_path = "${path_relative_to_include()}/../kms"
+  config_path = "/home/ubuntu/Documents/vinhdo/vinhdo-terraform-infrastructure/prod/kms"
 
   mock_outputs = {
     this_key_arn = ""
@@ -69,7 +71,7 @@ inputs = {
     karpenter = {
       name       = "karpenter"
       subnet_ids = dependency.vpc.outputs.private_subnets
-      selectors = [
+      selectors  = [
         {
           namespace = "karpenter"
         }

@@ -11,25 +11,25 @@ terraform {
 
 # Indicate the input values to use for the variables of the module.
 inputs = {
+  # VPC Basic Details
   name = "${local.region}-vpc"
   cidr = "10.0.0.0/16"
-
   azs             = ["${local.region}a", "${local.region}b"]
-  // Private subnet gets /19 blocks (8190 addresses)
-  private_subnets  = ["10.0.0.0/19", "10.0.32.0/19"] // 10.0.96.0/19
-  // Public subnet gets /20 blocks (4094 addresses)
-  public_subnets   = ["10.0.128.0/20", "10.0.144.0/20"] // 10.0.176.0/20
-  // Database subnet gets /24 blocks (254 addresses)
-  database_subnets = ["10.0.192.0/24", "10.0.193.0/24"] // 10.0.195.0/24
+  private_subnets     = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets      = ["10.0.101.0/24", "10.0.102.0/24"]
+
+  # Database Subnets
+  create_database_subnet_group = true
+  create_database_subnet_route_table= true
+  database_subnets    = ["10.0.151.0/24", "10.0.152.0/24"]
 
   // Enable DNS Support (required for EKS)
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  // Enable single NAT Gateway
-  enable_nat_gateway     = true
-  single_nat_gateway     = true
-  one_nat_gateway_per_az = false
+  # NAT Gateways - Outbound Communication
+  enable_nat_gateway = true
+  single_nat_gateway = true
 
   // Network ACL
   public_dedicated_network_acl   = true
@@ -39,10 +39,24 @@ inputs = {
   create_database_subnet_route_table = true
   create_database_nat_gateway_route  = true
 
-  #  enable_vpn_gateway = false
+  public_subnet_tags = {
+    Type = "public-subnets"
+  }
+
+  private_subnet_tags = {
+    Type = "private-subnets"
+  }
+
+  database_subnet_tags = {
+    Type = "database-subnets"
+  }
 
   tags = {
     Terraform   = "true"
     Environment = "dev"
+  }
+
+  vpc_tags = {
+    Name = "eks-vpc"
   }
 }
