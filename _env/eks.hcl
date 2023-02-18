@@ -18,9 +18,9 @@ dependency "vpc" {
   }
 }
 
-dependency "mysql" {
-  config_path = "../mysql"
-}
+#dependency "mysql" {
+#  config_path = "../mysql"
+#}
 
 terraform {
   source = "tfr:///terraform-aws-modules/eks/aws?version=19.7.0"

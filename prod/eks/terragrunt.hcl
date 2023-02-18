@@ -7,6 +7,6 @@ include "env" {
   expose = true
 }
 
-inputs = {
-  env = "qa"
-}
+#inputs = {
+#  env = "qa"
+#}
