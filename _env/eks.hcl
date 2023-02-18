@@ -19,15 +19,6 @@ dependency "vpc" {
   }
 }
 
-dependency "kms" {
-  #  config_path = "${path_relative_to_include()}/../kms"
-  config_path = "/home/ubuntu/Documents/vinhdo/vinhdo-terraform-infrastructure/prod/kms"
-
-  mock_outputs = {
-    this_key_arn = ""
-  }
-}
-
 terraform {
   source = "tfr:///terraform-aws-modules/eks/aws?version=19.7.0"
 }
@@ -41,13 +32,6 @@ inputs = {
   aws_region = local.region
   vpc_id     = dependency.vpc.outputs.vpc_id
   subnet_ids = concat(dependency.vpc.outputs.public_subnets, dependency.vpc.outputs.private_subnets)
-
-  cluster_encryption_config = [
-    {
-      provider_key_arn = dependency.kms.outputs.this_key_arn
-      resources        = ["secrets"]
-    }
-  ]
 
   cluster_addons = {
     coredns = {
