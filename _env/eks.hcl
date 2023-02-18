@@ -18,9 +18,13 @@ dependency "vpc" {
   }
 }
 
-#dependency "mysql" {
-#  config_path = "../mysql"
-#}
+dependency "kms" {
+  config_path = "../kms"
+
+  mock_outputs = {
+    this_key_arn = ""
+  }
+}
 
 terraform {
   source = "tfr:///terraform-aws-modules/eks/aws?version=19.7.0"
@@ -36,8 +40,40 @@ inputs = {
   vpc_id     = dependency.vpc.outputs.vpc_id
   subnet_ids = concat(dependency.vpc.outputs.public_subnets, dependency.vpc.outputs.private_subnets)
 
+  cluster_encryption_config = [
+    {
+      provider_key_arn = dependency.kms.outputs.this_key_arn
+      resources        = ["secrets"]
+    }
+  ]
 
-  env            = "${local.env}-${local.region}-cluster"
-  basename       = "example-app-${local.env_name}"
-  mysql_endpoint = dependency.mysql.outputs.endpoint
+  cluster_addons = {
+    coredns = {
+      preserve    = true
+      most_recent = true
+
+      timeouts = {
+        create = "25m"
+        delete = "10m"
+      }
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+  }
+
+  fargate_profiles = {
+    karpenter = {
+      name       = "karpenter"
+      subnet_ids = dependency.vpc.outputs.private_subnets
+      selectors = [
+        {
+          namespace = "karpenter"
+        }
+      ]
+    }
+  }
 }
