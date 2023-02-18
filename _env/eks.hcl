@@ -19,6 +19,10 @@ dependency "vpc" {
   }
 }
 
+dependency "iam_roles_data" {
+  config_path = "/home/ubuntu/Documents/vinhdo/vinhdo-terraform-infrastructure/prod/iam-roles-data"
+}
+
 terraform {
   source = "tfr:///terraform-aws-modules/eks/aws?version=19.7.0"
 }
@@ -32,6 +36,25 @@ inputs = {
   aws_region = local.region
   vpc_id     = dependency.vpc.outputs.vpc_id
   subnet_ids = concat(dependency.vpc.outputs.public_subnets, dependency.vpc.outputs.private_subnets)
+
+  # aws-auth configmap
+  manage_aws_auth_configmap = true
+  aws_auth_roles = concat(
+    [
+      for arn in dependency.iam_roles_data.outputs.sso_admin_role_eks_arns : {
+        rolearn  = "${arn}"
+        username = "aws:{{AccountID}}:administrator:{{SessionName}}"
+        groups   = ["system:masters"]
+      }
+    ],
+    [
+      for arn in dependency.iam_roles_data.outputs.sso_poweruser_role_eks_arns : {
+        rolearn  = "${arn}"
+        username = "aws:{{AccountID}}:poweruser:{{SessionName}}"
+        groups   = ["system:masters"]
+      }
+    ],
+  )
 
   cluster_addons = {
     coredns = {
@@ -52,6 +75,30 @@ inputs = {
   }
 
   fargate_profiles = {
+    default = {
+      name       = "default"
+      subnet_ids = dependency.vpc.outputs.private_subnets
+      selectors  = [
+        {
+          namespace = "kube-system"
+          #          labels    = {
+          #            k8s-app = "kube-dns"
+          #          }
+        },
+        {
+          namespace = "default"
+        }
+      ]
+
+      tags = {
+        Owner = "test"
+      }
+
+      timeouts = {
+        create = "20m"
+        delete = "20m"
+      }
+    }
     karpenter = {
       name       = "karpenter"
       subnet_ids = dependency.vpc.outputs.private_subnets
