@@ -9,7 +9,7 @@ locals {
 }
 
 dependency "vpc" {
-  config_path = "../vpc"
+  config_path = "${path_relative_to_include()}/../vpc"
 
   mock_outputs = {
     vpc_id          = ""
@@ -19,7 +19,7 @@ dependency "vpc" {
 }
 
 dependency "kms" {
-  config_path = "../kms"
+  config_path = "${path_relative_to_include()}/../kms"
 
   mock_outputs = {
     this_key_arn = ""
