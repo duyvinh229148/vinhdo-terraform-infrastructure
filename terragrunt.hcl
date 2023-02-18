@@ -44,12 +44,11 @@ remote_state {
     if_exists = "overwrite_terragrunt"
   }
   config = {
-    bucket = "my-terraform-state-${local.account_id}-${local.region}"
+    bucket = "my-tf-state-${local.account_id}-${local.region}"
 
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = "${local.region}"
     encrypt        = true
     dynamodb_table = "my-lock-table"
-    profile = "prod"
   }
 }
