@@ -17,3 +17,5 @@ data "aws_iam_roles" "kubernetes_deployer" {
   name_regex = "kubernetes-deployer-.*"
 }
 
+data "aws_caller_identity" "current" {}
+

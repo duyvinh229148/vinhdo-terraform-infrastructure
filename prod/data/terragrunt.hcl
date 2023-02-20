@@ -3,6 +3,6 @@ include "root" {
 }
 
 include "env" {
-  path   = "${get_terragrunt_dir()}/../../_env/iam-roles-data.hcl"
+  path   = "${get_terragrunt_dir()}/../../_env/data.hcl"
   expose = true
 }

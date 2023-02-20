@@ -41,3 +41,7 @@ output "kubernetes_deployer_role_eks_arns" {
 output "kubernetes_deployer_role_arns" {
   value = data.aws_iam_roles.kubernetes_deployer.arns
 }
+
+output "aws_caller_identity_current_arn" {
+  value = data.aws_caller_identity.current.arn
+}
