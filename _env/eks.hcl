@@ -15,11 +15,10 @@ dependency "vpc" {
 
   mock_outputs = {
     vpc_id          = ""
-    public_subnets  = []
-    private_subnets = []
-    control_plane_subnet_ids = ["1.1.1.1"]
-    subnet_ids = ["1.1.1.1"]
-    intra_subnets = []
+    public_subnets  = [""]
+    private_subnets = [""]
+    subnet_ids      = [""]
+    intra_subnets   = [""]
   }
 }
 
@@ -48,14 +47,35 @@ terraform {
 }
 
 inputs = {
-  // EKS Cluster information
-  // These should not be modified as they forces replacement of cluster
-  cluster_name    = local.cluster_name
-  cluster_version = "1.24"
+  cluster_name                   = local.cluster_name
+  cluster_version                = "1.24"
+  cluster_endpoint_public_access = true
 
-  aws_region = local.region
-  vpc_id     = dependency.vpc.outputs.vpc_id
-  subnet_ids = concat(dependency.vpc.outputs.public_subnets, dependency.vpc.outputs.private_subnets)
+  cluster_addons = {
+    coredns = {
+      preserve    = true
+      most_recent = true
+
+      timeouts = {
+        create = "25m"
+        delete = "10m"
+      }
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    aws-ebs-csi-driver = {
+      most-recent = true
+    }
+  }
+
+  aws_region               = local.region
+  vpc_id                   = dependency.vpc.outputs.vpc_id
+  subnet_ids               = dependency.vpc.outputs.private_subnets
+  control_plane_subnet_ids = dependency.vpc.outputs.intra_subnets
 
   # Self managed node groups will not automatically create the aws-auth configmap so we need to
   create_aws_auth_configmap = true
@@ -89,26 +109,7 @@ inputs = {
     "${local.account_id}"
   ]
 
-  cluster_addons = {
-    coredns = {
-      preserve    = true
-      most_recent = true
 
-      timeouts = {
-        create = "25m"
-        delete = "10m"
-      }
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent = true
-    }
-    aws-ebs-csi-driver = {
-      most-recent = true
-    }
-  }
 
   fargate_profiles = {
     default = {
