@@ -102,6 +102,9 @@ inputs = {
     vpc-cni = {
       most_recent = true
     }
+    aws-ebs-csi-driver = {
+      most-recent = true
+    }
   }
 
   fargate_profiles = {
