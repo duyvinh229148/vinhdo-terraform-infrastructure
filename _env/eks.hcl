@@ -6,10 +6,9 @@ locals {
   region     = local.env_vars.locals.region
   user       = local.env_vars.locals.user
 
-  cluster_name      = "${local.env}-${local.region}-cluster"
-  iam_role_name     = "tf-iam-role"
-  k8s_iam_role_name = coalesce(local.iam_role_name, "${local.cluster_name}-cluster")
-  role_arn          = "arn:aws:iam::${local.account_id}:role/${local.k8s_iam_role_name}"
+  cluster_name  = "my-${local.env}-cluster"
+  iam_role_name = "tf-iam-role"
+  role_arn      = "arn:aws:iam::${local.account_id}:role/${local.iam_role_name}"
 }
 
 dependency "vpc" {
@@ -22,10 +21,6 @@ dependency "vpc" {
     subnet_ids      = [""]
     intra_subnets   = [""]
   }
-}
-
-dependency "iam_roles_data" {
-  config_path = "//${get_repo_root()}/prod/iam-roles-data"
 }
 
 generate "eks_providers" {
@@ -55,13 +50,13 @@ inputs = {
 
   cluster_addons = {
     coredns = {
-      preserve    = true
+      #      preserve    = true
       most_recent = true
 
-      timeouts = {
-        create = "25m"
-        delete = "10m"
-      }
+      #      timeouts = {
+      #        create = "25m"
+      #        delete = "10m"
+      #      }
     }
     kube-proxy = {
       most_recent = true
@@ -82,29 +77,14 @@ inputs = {
   # Self managed node groups will not automatically create the aws-auth configmap so we need to
   create_aws_auth_configmap = true
   manage_aws_auth_configmap = true
+  iam_role_name             = local.iam_role_name
   aws_auth_roles            = [
     {
       rolearn  = "${local.role_arn}"
-      username = "${local.k8s_iam_role_name}"
+      username = "${local.role_arn}"
       groups   = ["system:masters"]
     }
   ]
-  #  aws_auth_roles            = concat(
-  #    [
-  #      for arn in dependency.iam_roles_data.outputs.sso_admin_role_eks_arns : {
-  #      rolearn  = "${arn}"
-  #      username = "aws:{{AccountID}}:administrator:{{SessionName}}"
-  #      groups   = ["system:masters"]
-  #    }
-  #    ],
-  #    [
-  #      for arn in dependency.iam_roles_data.outputs.sso_poweruser_role_eks_arns : {
-  #      rolearn  = "${arn}"
-  #      username = "aws:{{AccountID}}:poweruser:{{SessionName}}"
-  #      groups   = ["system:masters"]
-  #    }
-  #    ],
-  #  )
 
   fargate_profiles = {
     default = {
