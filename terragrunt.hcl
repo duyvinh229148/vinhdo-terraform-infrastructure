@@ -1,5 +1,3 @@
-
-
 locals {
   # Load the relevant env.hcl file based on where terragrunt was invoked. This works because find_in_parent_folders
   # always works at the context of the child configuration.

@@ -17,6 +17,8 @@ dependency "vpc" {
     vpc_id          = ""
     public_subnets  = []
     private_subnets = []
+    control_plane_subnet_ids = []
+    subnet_ids = []
   }
 }
 
