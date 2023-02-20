@@ -11,8 +11,7 @@ locals {
 }
 
 dependency "vpc" {
-  #  config_path = "${path_relative_to_include()}/../vpc"
-  config_path = "/home/ubuntu/Documents/vinhdo/vinhdo-terraform-infrastructure/prod/vpc"
+  config_path = "//${get_repo_root()}/prod/vpc"
 
   mock_outputs = {
     vpc_id          = ""
@@ -22,7 +21,7 @@ dependency "vpc" {
 }
 
 dependency "iam_roles_data" {
-  config_path = "/home/ubuntu/Documents/vinhdo/vinhdo-terraform-infrastructure/prod/iam-roles-data"
+  config_path = "//${get_repo_root()}/prod/iam-roles-data"
 }
 
 generate "eks_providers" {
