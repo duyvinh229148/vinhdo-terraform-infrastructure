@@ -6,9 +6,9 @@ locals {
   region     = local.env_vars.locals.region
   user       = local.env_vars.locals.user
 
-  cluster_name  = "my-${local.env}-cluster"
-  iam_role_name = "tf-iam-role"
-  role_arn      = "arn:aws:iam::${local.account_id}:role/${local.iam_role_name}"
+  cluster_name = local.env_vars.locals.cluster_name
+  tf_role_name = local.env_vars.locals.tf_role_name
+  tf_role_arn  = local.env_vars.locals.tf_role_arn
 }
 
 dependency "vpc" {
@@ -33,7 +33,7 @@ provider "kubernetes" {
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
-    args        = ["eks", "get-token", "--cluster-name", aws_eks_cluster.this[0].id, "--role-arn", "${local.role_arn}", "--region", "${local.region}"]
+    args        = ["eks", "get-token", "--cluster-name", aws_eks_cluster.this[0].id, "--role-arn", "${local.tf_role_arn}", "--region", "${local.region}"]
   }
 }
 EOF
@@ -77,11 +77,11 @@ inputs = {
   # Self managed node groups will not automatically create the aws-auth configmap so we need to
   create_aws_auth_configmap = true
   manage_aws_auth_configmap = true
-  iam_role_name             = local.iam_role_name
+  iam_role_name             = local.tf_role_name
   aws_auth_roles            = [
     {
-      rolearn  = "${local.role_arn}"
-      username = "${local.role_arn}"
+      rolearn  = "${local.tf_role_arn}"
+      username = "${local.tf_role_name}"
       groups   = ["system:masters"]
     }
   ]
