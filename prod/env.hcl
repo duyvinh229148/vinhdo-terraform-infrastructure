@@ -7,5 +7,5 @@ locals {
   cluster_name = "my-${local.env}-cluster"
 
   tf_role_name = "tf-eks-role"
-  tf_role_arn  = "arn:aws:iam::${local.account_id}:role/${local.tf_role_name}"
+  terraform_execution_role  = "arn:aws:iam::${local.account_id}:role/${local.tf_role_name}"
 }

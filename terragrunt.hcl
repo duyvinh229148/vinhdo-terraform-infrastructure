@@ -3,14 +3,13 @@ locals {
   # always works at the context of the child configuration.
   env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
 
-  account_id = local.env_vars.locals.account_id
-  region = local.env_vars.locals.region
-  role_name = local.env_vars.locals.role_name
+  account_id  = local.env_vars.locals.account_id
+  aws_region      = local.env_vars.locals.aws_region
+  terraform_execution_role = local.env_vars.locals.terraform_execution_role
 }
 
-terraform_version_constraint = ">= 1.3.7"
+terraform_version_constraint  = ">= 1.3.7"
 terragrunt_version_constraint = ">= 0.43.0"
-#iam_role = "arn:aws:iam::${local.account_id}:role/${local.role_name}"
 
 generate "versions" {
   path      = "override.tf"

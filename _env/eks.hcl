@@ -3,12 +3,12 @@ locals {
 
   env        = local.env_vars.locals.env
   account_id = local.env_vars.locals.account_id
-  region     = local.env_vars.locals.region
+  aws_region = local.env_vars.locals.aws_region
   user       = local.env_vars.locals.user
 
-  cluster_name = local.env_vars.locals.cluster_name
-  tf_role_name = local.env_vars.locals.tf_role_name
-  tf_role_arn  = local.env_vars.locals.tf_role_arn
+  cluster_name             = local.env_vars.locals.cluster_name
+  tf_role_name             = local.env_vars.locals.tf_role_name
+  terraform_execution_role = local.env_vars.locals.terraform_execution_role
 }
 
 dependency "vpc" {
@@ -23,22 +23,6 @@ dependency "vpc" {
   }
 }
 
-generate "eks_providers" {
-  path      = "eks_provider.tf"
-  if_exists = "overwrite_terragrunt"
-  contents  = <<EOF
-provider "kubernetes" {
-  host                   = aws_eks_cluster.this[0].endpoint
-  cluster_ca_certificate = base64decode(aws_eks_cluster.this[0].certificate_authority[0].data)
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    args        = ["eks", "get-token", "--cluster-name", aws_eks_cluster.this[0].id, "--role-arn", "${local.tf_role_arn}", "--region", "${local.region}"]
-  }
-}
-EOF
-}
-
 terraform {
   source = "tfr:///terraform-aws-modules/eks/aws?version=19.7.0"
 }
@@ -50,13 +34,12 @@ inputs = {
 
   cluster_addons = {
     coredns = {
-      #      preserve    = true
       most_recent = true
 
-      #      timeouts = {
-      #        create = "25m"
-      #        delete = "10m"
-      #      }
+      timeouts = {
+        create = "10m"
+        delete = "10m"
+      }
     }
     kube-proxy = {
       most_recent = true
@@ -80,7 +63,7 @@ inputs = {
   iam_role_name             = local.tf_role_name
   aws_auth_roles            = [
     {
-      rolearn  = "${local.tf_role_arn}"
+      rolearn  = "${local.terraform_execution_role}"
       username = "${local.tf_role_name}"
       groups   = ["system:masters"]
     }
