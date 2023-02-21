@@ -31,8 +31,8 @@ inputs = {
   enable_dns_hostnames = true
 
   # NAT Gateways - Outbound Communication
-  enable_nat_gateway = true
-  single_nat_gateway = true
+#  enable_nat_gateway = true
+#  single_nat_gateway = true
 
   // Network ACL
   public_dedicated_network_acl   = true
