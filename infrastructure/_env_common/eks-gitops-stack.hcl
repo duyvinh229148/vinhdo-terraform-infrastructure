@@ -54,12 +54,11 @@ provider "kubectl" {
     args        = ["eks", "get-token", "--cluster-name", "${dependency.eks_cluster.outputs.cluster_id}", "--role-arn", "${local.terraform_execution_role}", "--region", "${local.aws_region}"]
   }
 }
-provider "sops" {}
 EOF
 }
 
 terraform {
-  source = "${path_relative_from_include()}/..//modules/eks-gitops-stack"
+  source = "${dirname(find_in_parent_folders("root.hcl"))}/..//modules/eks-gitops-stack"
 }
 
 inputs = {
@@ -67,12 +66,12 @@ inputs = {
   aws_region = local.aws_region
 
   #  ArgoCD
-  argocd_external_host                   = "argocd.dev.your.rentals"
-  argocd_external_host_tls_secret_name   = "your-rentals-tls"
-  argocd_dex_google_auth_enabled         = true
-  argocd_dex_google_auth_client_id       = local.argocd_secrets.clientID
-  argocd_dex_google_auth_client_secret   = local.argocd_secrets.clientSecret
-  argocd_dex_google_auth_allowed_domains = [
-    "your.rentals"
-  ]
+#  argocd_external_host                   = "argocd.dev.your.rentals"
+#  argocd_external_host_tls_secret_name   = "your-rentals-tls"
+#  argocd_dex_google_auth_enabled         = true
+#  argocd_dex_google_auth_client_id       = local.argocd_secrets.clientID
+#  argocd_dex_google_auth_client_secret   = local.argocd_secrets.clientSecret
+#  argocd_dex_google_auth_allowed_domains = [
+#    "your.rentals"
+#  ]
 }

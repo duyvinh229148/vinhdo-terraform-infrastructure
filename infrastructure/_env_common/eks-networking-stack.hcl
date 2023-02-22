@@ -54,12 +54,11 @@ provider "kubectl" {
     args        = ["eks", "get-token", "--cluster-name", "${dependency.eks_cluster.outputs.cluster_id}", "--role-arn", "${local.terraform_execution_role}", "--region", "${local.aws_region}"]
   }
 }
-provider "sops" {}
 EOF
 }
 
 terraform {
-  source = "${path_relative_from_include()}/..//modules/eks-networking-stack"
+  source = "${dirname(find_in_parent_folders("root.hcl"))}/..//modules/eks-networking-stack"
 }
 
 inputs = {
