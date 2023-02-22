@@ -3,8 +3,7 @@ include "root" {
 }
 
 include "env" {
-  path = "${dirname(find_in_parent_folders("root.hcl"))}/_env/eks.hcl"
-
+  path = "${dirname(find_in_parent_folders("root.hcl"))}/_env_common/eks.hcl"
   expose = true
 }
 

@@ -12,7 +12,8 @@ locals {
 }
 
 dependency "vpc" {
-  config_path = "//${get_repo_root()}/prod/vpc"
+  #  config_path = "//${get_repo_root()}/prod/vpc"
+  config_path = "${get_terragrunt_dir()}/../vpc"
 
   mock_outputs = {
     vpc_id          = ""

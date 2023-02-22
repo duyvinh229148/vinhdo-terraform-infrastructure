@@ -5,7 +5,7 @@ locals {
 }
 
 terraform {
-  source = "${path_relative_from_include()}/../modules/data"
+  source = "${path_relative_from_include()}/..//modules/data"
 }
 
 inputs = {

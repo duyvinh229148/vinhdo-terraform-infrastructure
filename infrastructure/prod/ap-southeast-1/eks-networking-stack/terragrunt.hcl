@@ -3,6 +3,7 @@ include "root" {
 }
 
 include "env" {
-  path   = "${get_terragrunt_dir()}/../../_env/eks-gitops-stack.hcl"
+  path   = "${get_terragrunt_dir()}/../../_env/eks-networking-stack.hcl"
+
   expose = true
 }

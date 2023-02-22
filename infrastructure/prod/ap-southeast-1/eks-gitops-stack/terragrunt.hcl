@@ -3,6 +3,6 @@ include "root" {
 }
 
 include "env" {
-  path   = "${get_terragrunt_dir()}/../../_env/data.hcl"
+  path   = "${dirname(find_in_parent_folders("root.hcl"))}/_env_common/eks-gitops-stack.hcl"
   expose = true
 }

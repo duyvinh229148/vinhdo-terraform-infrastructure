@@ -3,6 +3,6 @@ include "root" {
 }
 
 include "env" {
-  path   = "${get_terragrunt_dir()}/../../_env/eks-networking-stack.hcl"
+  path = "${dirname(find_in_parent_folders("root.hcl"))}/_env_common/data.hcl"
   expose = true
 }

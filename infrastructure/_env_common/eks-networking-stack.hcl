@@ -10,7 +10,8 @@ locals {
 }
 
 dependency "eks-cluster" {
-  config_path = "//${get_repo_root()}/prod/eks"
+  #  config_path = "//${get_repo_root()}/prod/eks"
+  config_path = "${get_terragrunt_dir()}/../eks"
 
   mock_outputs = {
     cluster_id                         = ""
@@ -59,20 +60,8 @@ EOF
 }
 
 terraform {
-  source = "${path_relative_from_include()}/../modules/eks-gitops-stack"
+  source = "${path_relative_from_include()}/..//modules/eks-networking-stack"
 }
 
 inputs = {
-  cluster_id = dependency.eks_cluster.outputs.cluster_id
-  aws_region = local.aws_region
-
-  #  ArgoCD
-  argocd_external_host                   = "argocd.dev.your.rentals"
-  argocd_external_host_tls_secret_name   = "your-rentals-tls"
-  argocd_dex_google_auth_enabled         = true
-  argocd_dex_google_auth_client_id       = local.argocd_secrets.clientID
-  argocd_dex_google_auth_client_secret   = local.argocd_secrets.clientSecret
-  argocd_dex_google_auth_allowed_domains = [
-    "your.rentals"
-  ]
 }
