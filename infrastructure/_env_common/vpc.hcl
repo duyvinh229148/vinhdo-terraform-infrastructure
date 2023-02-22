@@ -1,8 +1,10 @@
 locals {
-  env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+  aws_account_id       = local.account_vars.locals.aws_account_id
+  terraform_execution_role = local.account_vars.locals.terraform_execution_role
 
-  account_id = local.env_vars.locals.account_id
-  aws_region = local.env_vars.locals.aws_region
+  region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
+  aws_region           = local.region_vars.locals.aws_region
 }
 
 terraform {
@@ -12,10 +14,10 @@ terraform {
 # Indicate the input values to use for the variables of the module.
 inputs = {
   # VPC Basic Details
-  name = "${local.region}-vpc"
+  name = "${local.aws_region}-vpc"
   cidr = "10.0.0.0/16"
 
-  azs              = ["${local.region}a", "${local.region}b", "${local.region}c"]
+  azs              = ["${local.aws_region}a", "${local.aws_region}b", "${local.aws_region}c"]
   private_subnets  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets   = ["10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
   database_subnets = ["10.0.21.0/24", "10.0.22.0/24", "10.0.23.0/24"]

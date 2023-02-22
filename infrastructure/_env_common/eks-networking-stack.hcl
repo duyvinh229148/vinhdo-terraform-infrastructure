@@ -1,5 +1,5 @@
 locals {
-  env_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  env_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
 
   env        = local.env_vars.locals.env
   account_id = local.env_vars.locals.account_id
@@ -9,8 +9,7 @@ locals {
   terraform_execution_role = local.env_vars.locals.terraform_execution_role
 }
 
-dependency "eks-cluster" {
-  #  config_path = "//${get_repo_root()}/prod/eks"
+dependency "eks_cluster" {
   config_path = "${get_terragrunt_dir()}/../eks"
 
   mock_outputs = {

@@ -3,7 +3,7 @@ include "root" {
 }
 
 include "env" {
-  path   = "${get_terragrunt_dir()}/../../_env/vpc.hcl"
+  path   = "${dirname(find_in_parent_folders("root.hcl"))}/_env_common/vpc.hcl"
   expose = true
 }
 
