@@ -67,6 +67,29 @@ inputs = {
     }
   ]
 
+  self_managed_node_group_defaults = {
+    instance_type                          = "t3.medium"
+    update_launch_template_default_version = true
+
+    iam_role_additional_policies = [
+      "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    ]
+
+    tags = {
+      "karpenter.sh/discovery/${local.cluster_name}" = "${local.cluster_name}"
+    }
+    create_security_group = false
+  }
+
+  self_managed_node_groups = {
+    karpenter = {
+      name                     = "karpenter"
+      create_autoscaling_group = false
+      create_launch_template   = false
+      create_schedule          = false
+    }
+  }
+
   fargate_profiles = {
     default = {
       name       = "default"
