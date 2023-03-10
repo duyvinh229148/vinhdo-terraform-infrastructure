@@ -96,24 +96,18 @@ inputs = {
       subnet_ids = dependency.vpc.outputs.private_subnets
       selectors  = [
         {
-          namespace = "kube-system"
-          #          labels    = {
-          #            k8s-app = "kube-dns"
-          #          }
-        },
-        {
           namespace = "default"
         }
       ]
-
-      tags = {
-        Owner = "test"
-      }
-
-      timeouts = {
-        create = "20m"
-        delete = "20m"
-      }
+    }
+    kubesystem = {
+      name       = "kube-system"
+      subnet_ids = dependency.vpc.outputs.private_subnets
+      selectors  = [
+        {
+          namespace = "kube-system"
+        }
+      ]
     }
     karpenter = {
       name       = "karpenter"
